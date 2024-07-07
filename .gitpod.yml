@@ -1,0 +1,4 @@
+tasks:
+  - name: helm
+    before: |
+      source ./bin/install_helm
