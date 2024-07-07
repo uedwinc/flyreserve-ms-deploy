@@ -8,7 +8,13 @@ image:
   repository: uedwinc/flights
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: ""
+  tag: "v1.0"
+
+MYSQL_HOST: rds.flyreserve.com
+MYSQL_USER: microservices
+MYSQL_DATABASE: microservices_db
+MYSQLSecretName: mysql
+MYSQLSecretKey: password
 
 imagePullSecrets: []
 nameOverride: ""
@@ -44,15 +50,15 @@ service:
   port: 80
 
 ingress:
-  enabled: false
+  enabled: true
   className: ""
-  annotations: {}
-    # kubernetes.io/ingress.class: nginx
+  annotations:
+    kubernetes.io/ingress.class: traefik
     # kubernetes.io/tls-acme: "true"
   hosts:
-    - host: chart-example.local
+    - host: flightsvc.com
       paths:
-        - path: /
+        - path: ["/flights"]
           pathType: ImplementationSpecific
   tls: []
   #  - secretName: chart-example-tls
@@ -73,11 +79,11 @@ resources: {}
 
 livenessProbe:
   httpGet:
-    path: /
+    path: /ping
     port: http
 readinessProbe:
   httpGet:
-    path: /
+    path: /health
     port: http
 
 autoscaling:

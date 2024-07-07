@@ -36,14 +36,30 @@ spec:
             {{- toYaml .Values.securityContext | nindent 12 }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
+          env:
+            - name: MYSQL_HOST
+              value: {{ .Values.MYSQL_HOST | quote }}
+            - name: MYSQL_USER
+              value: {{ .Values.MYSQL_USER | quote }}
+            - name : MYSQL_PASSWORD
+              valueFrom:
+                secretKeyRef: 
+                  name: {{ .Values.MYSQLSecretName | quote }}
+                  key: {{ .Values.MYSQLSecretKey | quote }}
+            - name: MYSQL_DATABASE
+              value: {{ .Values.MYSQL_DATABASE | quote }}
           ports:
             - name: http
-              containerPort: {{ .Values.service.port }}
+              containerPort: 5501
               protocol: TCP
           livenessProbe:
-            {{- toYaml .Values.livenessProbe | nindent 12 }}
+            httpGet:
+              path: /ping
+              port: http
           readinessProbe:
-            {{- toYaml .Values.readinessProbe | nindent 12 }}
+            httpGet:
+              path: /health
+              port: http
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
           {{- with .Values.volumeMounts }}
