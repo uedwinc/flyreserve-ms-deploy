@@ -53,12 +53,12 @@ ingress:
   enabled: true
   className: "ms-traefik-ingress"
   annotations:
-    kubernetes.io/ingress.class: traefik
+    kubernetes.io/ingress.class: ms-traefik-ingress
     # kubernetes.io/tls-acme: "true"
   hosts:
     - host: flightsvc.com
       paths:
-        - path: ["/flights"]
+        - path: /flights
           pathType: ImplementationSpecific
   tls: []
   #  - secretName: chart-example-tls
